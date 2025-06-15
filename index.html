@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Terminal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Canvas for the matrix background effect -->
+    <canvas id="matrix" class="matrix-background"></canvas>
+        
+    <!-- Main terminal container -->
+    <div class="terminal-container">
+        <!-- Terminal header -->
+        <div class="terminal-header">
+            <!-- Traffic light buttons (decorative) -->
+            <div class="terminal-buttons">
+                <div class="terminal-button red"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button green"></div>
+            </div>            <!-- Glitching terminal title -->
+            <div class="glitch" data-text="aditya@developer-terminal:~">aditya@developer-terminal:~</div>
+            <!-- Placeholder for alignment -->
+            <div class="terminal-buttons">
+                <div style="width: 20px;"></div>
+            </div>
+        </div>
+        <!-- Terminal body for content display -->
+        <div class="terminal-body" id="terminal-body">
+            <!-- Area for typing animation text -->
+            <div id="typing-text" class="typing-text"></div>
+            <!-- Command line input area (initially hidden) -->
+            <div id="command-line" class="command-line hidden">
+                <span class="prompt">></span> <!-- Command prompt -->
+                <input type="text" class="command-input" id="command-input" autocomplete="off"> <!-- User input field -->
+                <span class="cursor"></span> <!-- Blinking cursor -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
