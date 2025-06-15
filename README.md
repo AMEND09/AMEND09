@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Aditya Mendiratta
+# 🚀 [Aditya Mendiratta](https://amend09.github.io/AMEND09/)
 
 ### `Full Stack Developer` • `AI Enthusiast` • `Open Source Contributor`
 
