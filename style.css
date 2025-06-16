@@ -1,0 +1,401 @@
+/* Import Google Fonts for a terminal-like appearance */
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+/* Define CSS variables for easy theming */
+:root {
+    --terminal-bg: #0a0a12;
+    --terminal-green: #0f0;
+    --terminal-cyan: #0ff;
+    --terminal-purple: #b19cd9;
+    --terminal-red: #f44;
+    --terminal-yellow: #ffbd2e; /* Added for directory color */
+    --terminal-glow: rgba(0, 255, 0, 0.7);
+    --terminal-border: #333;
+    --text-color: #e0e0e0;
+    --text-shadow: 0 0 8px var(--terminal-glow);
+}
+
+/* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling for the overall page layout */
+body {
+    background: #000; /* Black background for a dark sci-fi feel */
+    overflow: hidden; /* Hide scrollbars as content is contained within terminal */
+    font-family: 'Inconsolata', monospace; /* Use Inconsolata for terminal text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+    perspective: 1000px; /* For 3D floating effect */
+}
+
+/* Styling for the matrix background canvas */
+.matrix-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Place behind the terminal */
+    /* Base opacity will be controlled by JS for dynamic lighting */
+}
+
+/* Container for the main terminal window */
+.terminal-container {
+    position: relative;
+    width: 85%;
+    max-width: 800px;
+    height: 70vh;
+    background: var(--terminal-bg);
+    border-radius: 8px; /* Rounded corners for the terminal */
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5), /* Outer glow */
+                inset 0 0 10px rgba(0, 255, 0, 0.2); /* Inner glow */
+    overflow: hidden; /* Clip content within terminal */
+    border: 1px solid var(--terminal-green); /* Green border */
+    transform-style: preserve-3d; /* Enable 3D transforms for floating */
+    animation: float 8s ease-in-out infinite; /* Floating animation */
+}
+
+/* Keyframes for the floating animation */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotateX(10deg) rotateY(5deg);
+    }
+    50% {
+        transform: translateY(-20px) rotateX(5deg) rotateY(10deg);
+    }
+}
+
+/* Terminal header bar styling */
+.terminal-header {
+    background: linear-gradient(to right, #0a0a0a, #111);
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--terminal-green);
+    font-family: 'Share Tech Mono', monospace; /* Different font for header */
+    border-bottom: 1px solid var(--terminal-green);
+    box-shadow: 0 2px 15px rgba(0, 255, 0, 0.3); /* Header glow */
+}
+
+/* Container for the minimize/maximize/close buttons */
+.terminal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* Individual terminal button styling */
+.terminal-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%; /* Make them circular */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Specific colors for the terminal buttons */
+.terminal-button.red {
+    background: #ff5f56;
+}
+
+.terminal-button.yellow {
+    background: #ffbd2e;
+}
+
+.terminal-button.green {
+    background: #27c93f;
+}
+
+/* Main body of the terminal for text output */
+.terminal-body {
+    padding: 15px;
+    height: calc(100% - 40px); /* Adjust height based on header */
+    overflow-y: auto; /* Enable scrolling for long content */
+    color: var(--text-color);
+    text-shadow: var(--text-shadow); /* Text glow effect */
+    line-height: 1.6;
+    scroll-behavior: smooth; /* Smooth scroll effect */
+    /* Hide scrollbar */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbar for webkit browsers */
+.terminal-body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Style for the typing animation text */
+.typing-text {
+    white-space: pre-wrap; /* Preserve whitespace and allow wrapping */
+    font-size: 1.1rem;
+}
+
+/* Styling for the interactive command line */
+.command-line {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Prompt symbol styling */
+.prompt {
+    color: var(--terminal-green);
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+/* Blinking cursor effect */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    background: var(--terminal-green);
+    animation: blink 1s infinite; /* Blinking animation */
+    vertical-align: middle;
+}
+
+/* Keyframes for the cursor blinking */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Styling for the command input field */
+.command-input {
+    flex-grow: 1; /* Take up remaining space */
+    background: transparent; /* Transparent background */
+    border: none; /* No border */
+    color: var(--terminal-green); /* Green input text */
+    font-family: 'Inconsolata', monospace;
+    font-size: 1.1rem;
+    outline: none; /* Remove focus outline */
+    caret-color: var(--terminal-green); /* Blinking cursor color */
+    text-shadow: var(--text-shadow); /* Input text glow */
+}
+
+/* Glitch effect on the terminal header text */
+.glitch {
+    position: relative;
+}
+
+.glitch::before, .glitch::after {
+    content: attr(data-text); /* Use data-text attribute for content */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--terminal-bg); /* Match terminal background */
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--terminal-red); /* Red shadow offset */
+    clip: rect(24px, 550px, 90px, 0); /* Clip to create distortion */
+    animation: glitch-anim-1 2s infinite linear alternate-reverse; /* Glitch animation 1 */
+}
+
+.glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--terminal-cyan); /* Cyan shadow offset */
+    clip: rect(85px, 550px, 140px, 0); /* Clip to create distortion */
+    animation: glitch-anim-2 2s infinite linear alternate-reverse; /* Glitch animation 2 */
+}
+
+/* Keyframes for the first glitch animation */
+@keyframes glitch-anim-1 {
+    0% { clip: rect(54px, 800px, 54px, 0); }
+    20% { clip: rect(27px, 800px, 86px, 0); }
+    40% { clip: rect(14px, 800px, 75px, 0); }
+    60% { clip: rect(39px, 800px, 104px, 0); }
+    80% { clip: rect(18px, 800px, 53px, 0); }
+    100% { clip: rect(73px, 800px, 112px, 0); }
+}
+
+/* Keyframes for the second glitch animation */
+@keyframes glitch-anim-2 {
+    0% { clip: rect(35px, 800px, 89px, 0); }
+    20% { clip: rect(56px, 800px, 103px, 0); }
+    40% { clip: rect(22px, 800px, 64px, 0); }
+    60% { clip: rect(88px, 800px, 120px, 0); }
+    80% { clip: rect(13px, 800px, 32px, 0); }
+    100% { clip: rect(42px, 800px, 99px, 0); }
+}
+
+/* Enhanced styling for achievement and project highlights */
+.achievement-highlight {
+    color: var(--terminal-yellow);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--terminal-yellow);
+}
+
+/* Spotify/music status styling */
+.music-status {
+    background: linear-gradient(45deg, var(--terminal-purple), var(--terminal-cyan));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+/* Enhanced link styling with hover effects */
+.enhanced-link {
+    color: var(--terminal-cyan);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--terminal-cyan);
+    transition: all 0.3s ease;
+}
+
+.enhanced-link:hover {
+    color: var(--terminal-green);
+    border-bottom-color: var(--terminal-green);
+    text-shadow: 0 0 8px var(--terminal-green);
+    transform: translateX(5px);
+}
+
+/* Animated typing cursor effect */
+.typing-cursor {
+    display: inline-block;
+    background-color: var(--terminal-green);
+    animation: blink 1s infinite;
+    width: 2px;
+    height: 1.2em;
+    margin-left: 2px;
+}
+
+/* Command response container styling */
+.command-response {
+    margin: 10px 0;
+    padding: 10px;
+    border-left: 3px solid var(--terminal-green);
+    background: rgba(0, 255, 0, 0.05);
+    border-radius: 0 5px 5px 0;
+}
+
+/* Progress bar styling for loading effects */
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terminal-green), var(--terminal-cyan));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px var(--terminal-glow);
+}
+
+/* ASCII art and decorative elements */
+.ascii-art {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--terminal-purple);
+    text-shadow: 0 0 3px var(--terminal-purple);
+    line-height: 1.2;
+}
+
+/* Status indicators */
+.status-online {
+    color: var(--terminal-green);
+    font-weight: bold;
+}
+
+.status-busy {
+    color: var(--terminal-yellow);
+    font-weight: bold;
+}
+
+.status-offline {
+    color: var(--terminal-red);
+    font-weight: bold;
+}
+
+/* Command history styling */
+.command-history {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--terminal-red);
+    background: rgba(255, 68, 68, 0.1);
+    padding: 5px 10px;
+    border-radius: 3px;
+    border-left: 3px solid var(--terminal-red);
+}
+
+/* Success message styling */
+.success-message {
+    color: var(--terminal-green);
+    background: rgba(0, 255, 0, 0.1);
+    padding: 5px 10px;
+    border-radius: 3px;
+    border-left: 3px solid var(--terminal-green);
+}
+
+/* Warning message styling */
+.warning-message {
+    color: var(--terminal-yellow);
+    background: rgba(255, 189, 46, 0.1);
+    padding: 5px 10px;
+    border-radius: 3px;    border-left: 3px solid var(--terminal-yellow);
+}
+
+/* Profile image glow animation */
+@keyframes profileGlow {
+    0% {
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        filter: brightness(1);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.3);
+        filter: brightness(1.1);
+    }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .terminal-container {
+        width: 95%;
+        height: 80vh;
+        margin: 10px;
+    }
+    
+    .terminal-body {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+    
+    .command-input {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .terminal-container {
+        width: 98%;
+        height: 85vh;
+        margin: 5px;
+    }
+    
+    .terminal-body {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .terminal-header {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+}
